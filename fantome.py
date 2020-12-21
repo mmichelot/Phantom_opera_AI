@@ -30,6 +30,37 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.WARNING)
 fantom_logger.addHandler(stream_handler)
 
+class Tree:
+    def __init__(self, wins, played, parent):
+        self.children = []
+        self.wins = wins
+        self.played = played
+
+root = Tree()
+current = root
+
+#Exploit or Explore
+def selection():
+
+#If not final, create childs (with the numbers of possibilities) and choose a child
+#We know that the node is final if the simulation didn't ask for action anymore
+def expansion(leaf):
+    if (not leaf.final):
+        leaf.createChilds()
+
+#Simulate random game from chosen child
+def simulation():
+
+#Update values in the tree
+def backpropagation(win):
+    i = current
+    while (i != root):
+        if (win):
+            i.wins += 1
+        i.played += 1
+        i = i.parent
+
+
 
 class Player():
 
