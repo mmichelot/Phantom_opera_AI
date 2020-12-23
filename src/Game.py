@@ -26,12 +26,6 @@ class Game:
 
         self.character_cards = list(self.characters)
         self.active_cards = list()
-        self.alibi_cards = self.character_cards.copy()
-
-        self.fantom = choice(self.alibi_cards) # a modifié pour choisir le fantom
-
-        self.alibi_cards.remove(self.fantom)
-        self.alibi_cards.extend(['fantom'] * 3)
 
         self.game_state = {
             "position_carlotta": self.position_carlotta,
@@ -40,21 +34,11 @@ class Game:
             "shadow": self.shadow,
             "blocked": self.blocked,
             "characters": self.characters_display,
-            # Todo: should be removed
             "character_cards": self.character_cards_display,
             "active character_cards": self.active_cards_display,
         }
 
     def actions(self, step):
-        """
-        phase = tour
-        phase 1 : IFFI
-        phase 2 : FIIF
-        first phase : initially num_tour = 1, then 3, 5, etc.
-        so the first player to play is (1+1)%2=0 (inspector)
-        second phase : num_tour = 2, 4, 6, 8, etc.
-        so the first player to play is (2+1)%2=1 (fantom)
-        """
         first_player_in_phase = (self.num_tour + 1) % 2
         if first_player_in_phase == 0:
             shuffle(self.character_cards)
@@ -62,7 +46,6 @@ class Game:
         else:
             self.active_cards = self.character_cards[4:]
 
-        # the characters should be able to use their power at each new round
         for card in self.active_cards:
             card.power_activated = False
 
@@ -102,20 +85,15 @@ class Game:
         for p in self.characters:
             p.power = True
         self.num_tour += 1
+        return self.game_state
 
     def update_game_state(self, player_role):
-        """
-            representation of the global state of the game.
-        """
         self.characters_display = [character.display() for character in
                                    self.characters]
-        # Todo: should be removed
         self.character_cards_display = [tile.display() for tile in
                                         self.character_cards]
         self.active_cards_display = [tile.display() for tile in
                                      self.active_cards]
-        # update
-
         self.game_state = {
             "position_carlotta": self.position_carlotta,
             "exit": self.exit,
@@ -123,7 +101,6 @@ class Game:
             "shadow": self.shadow,
             "blocked": self.blocked,
             "characters": self.characters_display,
-            # Todo: should be removed
             "character_cards": self.character_cards_display,
             "active character_cards": self.active_cards_display
         }
@@ -144,3 +121,15 @@ class Game:
         self.character_cards_display = game_state["character_cards"]
         self.active_cards_display = game_state["active"]
         self.game_state = game_state
+
+
+        # set fantom
+        self.alibi_cards = self.character_cards.copy()
+
+        if game_state["fantom"]:
+            self.fantom = Character(game_state["fantom"])
+        else:
+            self.fantom = choice(self.alibi_cards)
+
+        self.alibi_cards.remove(self.fantom)
+        self.alibi_cards.extend(['fantom'] * 3)
