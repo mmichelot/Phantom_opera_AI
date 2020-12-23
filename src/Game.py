@@ -20,9 +20,9 @@ class Game:
     cards: List[Union[Character, str]]
     fantom: Character
 
-    def __init__(self, players: List[Player]):
+    def __init__(self):
         self.characters = set({Character(color) for color in colors})
-        self.players = players
+        self.players = [Player(0), Player(1)]
 
         self.character_cards = list(self.characters)
         self.active_cards = list()
@@ -67,13 +67,13 @@ class Game:
             card.power_activated = False
 
         if (step > 3):
-            self.players[first_player_in_phase].play(self)
+            self.players[first_player_in_phase].play(self, tree)
         if (step > 2):
-            self.players[1 - first_player_in_phase].play(self)
+            self.players[1 - first_player_in_phase].play(self, tree)
         if (step > 1):
-            self.players[1 - first_player_in_phase].play(self)
+            self.players[1 - first_player_in_phase].play(self, tree)
         if (step > 0):
-            self.players[first_player_in_phase].play(self)
+            self.players[first_player_in_phase].play(self, tree)
 
     def fantom_scream(self):
         partition: List[Set[Character]] = [
@@ -95,9 +95,9 @@ class Game:
         self.position_carlotta += len(
             [p for p in self.characters if p.suspect])
 
-    def tour(self, game_state, step):
+    def tour(self, tree, game_state, step):
         self.set_game_state(game_state)
-        self.actions(step)
+        self.actions(step, tree)
         self.fantom_scream()
         for p in self.characters:
             p.power = True
