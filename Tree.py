@@ -1,6 +1,9 @@
 import math
+import random
 
-import Game
+from src.Game import Game
+
+SIMULATION = 100
 
 class Node:
     def __init__(self, wins, played, parent):
@@ -10,25 +13,27 @@ class Node:
         self.played = played
 
 class Tree():
-    def __init__(self):
-        self.root = Node()
+    def __init__(self, player):
+        self.root = Node(0, 0, None)
         self.game = Game()
+        self.player = player #0 (inspector) or 1 (fantom)
+        self.current_answer = self.root
+        self.random_answer = []
+        self.random_answer_index = 0
 
     def new_simulation(self, characters, game_state):
-        #reset Tree
-        current = self.root
-        sim_end = False
-
-        #Create first childs
-        self.root.wins = 0
-        self.root.played = 0
-        for i in range(characters):
-            self.root.children.append(Node(0, 0, root))
-
         #Launch simulation
-        while not sim_end:
-            current = self.selection(self.root)
-            current = self.expansion(current, characters, game_state)
+        for _ in range(SIMULATION):
+            self.current_answer = self.root
+            self.random_answer_index = 0
+            self.game.init()
+            suspects_before = self.game.get_number_of_suspects()
+            fantom_scream = self.game.tour(self, characters) #launch sim
+            innocents = suspects_before - self.game.get_number_of_suspects()
+            winner = 0
+            if (innocents == 0 or (innocents == 1 and fantom_scream == True)):
+                winner = 1
+            self.backpropagation(winner == self.player, self.current_answer)
     
     def choose_and_cut(self):
         best = 0.0
@@ -41,35 +46,20 @@ class Tree():
         return best_node
 
     #Exploit or Explore
-    def selection(self):
-        current = self.root
+    def selection(self, current):
         best = 0.0
         best_node = 0
-        while (len(current.children) > 0): #while not leaf
-            for i in range(len(current.children)):
-                w = current.children[i].wins
-                n = current.children[i].played
-                c = math.sqrt(2)
-                N = current.played
-                res = (w / n) + (c * math.sqrt(math.log(N) / n))
-                if (res > best):
-                    best = res
-                    best_node = i
-            current = current.children[best_node]
-        return current
-
-    #If not final, create childs (with the numbers of possibilities) and choose a child
-    #We know that the node is final if the simulation didn't ask for action anymore
-    #Launch backpropagation when node is final
-    def expansion(self, current, characters, game_state):
-        self.game.tour(game_state, characters)
-        #créer les noeuds en fonction des questions si la question n'a pas été explorée
-        #if (len(node.children) == 0)
-        #for i in range(len(data)):
-        #node.children.append(Node(0, 0, root))
-
-        #Simuler jusqu'à la fin du tour, avec un adversaire random si besoin + mémoriser les choix
-        
+        for i in range(len(current.children)):
+            w = current.children[i].wins
+            n = current.children[i].played
+            c = math.sqrt(2)
+            N = current.played
+            res = (w / n) + (c * math.sqrt(math.log(N) / n))
+            if (res > best):
+                best = res
+                best_node = i
+        return best_node, current.children[best_node]
+        #while (len(current.children) > 0): #while not leaf
 
     #Update values in the tree
     def backpropagation(self, win, leaf):
@@ -79,3 +69,20 @@ class Tree():
                 i.wins += 1
             i.played += 1
             i = i.parent
+    
+    #Expansion
+    #To answer the question asked by the simulation. Build the tree from here if player is my player.
+    def ask(self, player, question):
+        if (player == self.player):
+            if (len(self.current_answer.children) == 0):
+                for i in range(len(question['data'])):
+                    self.current_answer.children.append(Node(0, 0, self.current_answer))
+            answer, self.current_answer = self.selection(self.current_answer)
+            return answer
+        else:
+            if (len(self.random_answer) > self.random_answer_index):
+                return self.random_answer[self.random_answer_index]
+            else:
+                answer = random.randint(0, len(question['data'])-1)
+                self.random_answer.append(answer)
+                return answer

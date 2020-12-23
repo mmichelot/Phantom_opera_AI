@@ -25,6 +25,9 @@ inspector_logger.addHandler(stream_handler)
 
 class Inspector(AI):
 
+    def __init__(self):
+        super().__init__(self, 0)
+
     def log_answer(self, data, question, response_index):
         inspector_logger.debug("|\n|")
         inspector_logger.debug("inspector answers")

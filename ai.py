@@ -1,6 +1,6 @@
 import json
-import random
 import socket
+from abc import ABCMeta, abstractmethod
 
 import protocol
 from Tree import Tree
@@ -9,11 +9,13 @@ host = "localhost"
 port = 12000
 # HEADERSIZE = 10
 
-class AI():
+class AI(object, metaclass=ABCMeta):
 
-    def __init__(self):
+    @abstractmethod
+    def __init__(self, player):
 
         self.tree: Tree
+        self.player = player #0 (inspector) or 1 (fantom)
 
         self.end = False
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -35,8 +37,8 @@ class AI():
         game_state = question["game state"]
 
         if question['question type'] == "select character":
-            self.tree = Tree()
-            self.tree.new_simulation(len(data))
+            self.tree = Tree(self.player)
+            self.tree.new_simulation(len(data), game_state)
         response_index = self.tree.choose_and_cut()
         # log
         self.log_answer(data, question, response_index)

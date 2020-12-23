@@ -23,7 +23,10 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.WARNING)
 fantom_logger.addHandler(stream_handler)
 
-class Fantom(AI):
+class Fantom(ai.AI):
+
+    def __init__(self):
+        super().__init__(1)
 
     def log_answer(self, data, question, response_index):
         fantom_logger.debug("|\n|")
