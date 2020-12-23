@@ -20,11 +20,8 @@ class Game:
     cards: List[Union[Character, str]]
     fantom: Character
 
-    # Todo: def __init__ should be __init__(self, player_1: Player, player_2:
-    #  Player)
-    def __init__(self, players: List[Player], game_state):
+    def __init__(self, players: List[Player]):
         self.characters = set({Character(color) for color in colors})
-        self.set_game_state(game_state)
         self.players = players
 
         self.character_cards = list(self.characters)
@@ -35,11 +32,6 @@ class Game:
 
         self.alibi_cards.remove(self.fantom)
         self.alibi_cards.extend(['fantom'] * 3)
-
-        # Todo: 1 Should be removed
-        shuffle(self.character_cards)
-        # Todo: 2 Should be removed
-        shuffle(self.alibi_cards)
 
         self.game_state = {
             "position_carlotta": self.position_carlotta,
@@ -53,10 +45,35 @@ class Game:
             "active character_cards": self.active_cards_display,
         }
 
-    def actions(self):
+    def actions(self, step):
+        """
+        phase = tour
+        phase 1 : IFFI
+        phase 2 : FIIF
+        first phase : initially num_tour = 1, then 3, 5, etc.
+        so the first player to play is (1+1)%2=0 (inspector)
+        second phase : num_tour = 2, 4, 6, 8, etc.
+        so the first player to play is (2+1)%2=1 (fantom)
+        """
+        first_player_in_phase = (self.num_tour + 1) % 2
+        if first_player_in_phase == 0:
+            shuffle(self.character_cards)
+            self.active_cards = self.character_cards[:4]
+        else:
+            self.active_cards = self.character_cards[4:]
+
+        # the characters should be able to use their power at each new round
         for card in self.active_cards:
             card.power_activated = False
-        self.players[0].play(self)
+
+        if (step > 3):
+            self.players[first_player_in_phase].play(self)
+        if (step > 2):
+            self.players[1 - first_player_in_phase].play(self)
+        if (step > 1):
+            self.players[1 - first_player_in_phase].play(self)
+        if (step > 0):
+            self.players[first_player_in_phase].play(self)
 
     def fantom_scream(self):
         partition: List[Set[Character]] = [
@@ -78,36 +95,13 @@ class Game:
         self.position_carlotta += len(
             [p for p in self.characters if p.suspect])
 
-    def tour(self):
-        self.actions()
+    def tour(self, game_state, step):
+        self.set_game_state(game_state)
+        self.actions(step)
         self.fantom_scream()
         for p in self.characters:
             p.power = True
         self.num_tour += 1
-
-    def lancer(self):
-        while self.position_carlotta < self.exit and len(
-                [p for p in self.characters if p.suspect]) > 1:
-            self.tour()
-
-
-        # game ends
-        if self.position_carlotta < self.exit:
-            logger.info(
-                "----------\n---- inspector wins : fantom is " + str(
-                    self.fantom))
-        else:
-            logger.info("----------\n---- fantom wins")
-
-        return self.exit - self.position_carlotta
-
-    def __repr__(self):
-        message = f"Tour: {self.num_tour},\n" \
-            f"Position Carlotta / exit: {self.position_carlotta}/{self.exit},\n" \
-            f"Shadow: {self.shadow},\n" \
-            f"blocked: {self.blocked}".join(
-                ["\n" + str(p) for p in self.characters])
-        return message
 
     def update_game_state(self, player_role):
         """
