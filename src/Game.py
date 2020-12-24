@@ -73,14 +73,13 @@ class Game:
             c.position = character['position']
             c.power = character['power']
             self.characters.append(c)
-            for data in active_cards:
-                if (character['color'] == data['color']):
-                    self.active_cards.append(c)
+        for data in active_cards:
+            for character in self.characters:
+                if (character.color == data['color']):
+                    self.active_cards.append(character)
 
         self.character_cards = list(self.characters)
         self.set_game_state(game_state)
-        print(self.characters)
-        print(self.active_cards)
 
     def tour(self, tree):
         self.actions(tree)
@@ -130,7 +129,6 @@ class Game:
         # set fantom
         self.alibi_cards = self.character_cards.copy()
 
-        print(game_state["fantom"])
         if game_state["fantom"]:
             for c in self.alibi_cards:
                 if c.color == game_state["fantom"]:

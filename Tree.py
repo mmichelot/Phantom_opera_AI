@@ -5,12 +5,20 @@ from src.Game import Game
 
 SIMULATION = 100
 
+def print_tree(node, depth):
+    current = node
+    print(("---" * depth) + node.question)
+    for i in range(len(node.children)):
+        print_tree(node.children[i], depth + 1)
+
 class Node:
-    def __init__(self, wins, played, parent):
+    def __init__(self, wins, played, parent, question = ""):
         self.parent = parent
         self.children = []
         self.wins = wins
         self.played = played
+
+        self.question = question
 
 class Tree():
     def __init__(self, player):
@@ -36,14 +44,15 @@ class Tree():
             self.backpropagation(winner == self.player, self.current_answer)
     
     def choose_and_cut(self):
+        #print("TREE:")
+        #print_tree(self.root, 0)
         best = 0.0
         best_node = 0
         for i in range(len(self.root.children)):
             if self.root.children[i].played > 0 and self.root.children[i].wins / self.root.children[i].played > best:
                 best = self.root.children[i].wins / self.root.children[i].played
                 best_node = i
-        if len(self.root.children == 0):
-            print("Error")
+        #print(self.root.children[best_node].question)
         self.root = self.root.children[best_node] #cut
         return best_node
 
@@ -81,9 +90,10 @@ class Tree():
     #To answer the question asked by the simulation. Build the tree from here if player is my player.
     def ask(self, player, question):
         if (player == self.player):
+            #print("SIMU: " + str(question['data']) + " : " + question['question type'])
             if (len(self.current_answer.children) == 0):
                 for i in range(len(question['data'])):
-                    self.current_answer.children.append(Node(0, 0, self.current_answer))
+                    self.current_answer.children.append(Node(0, 0, self.current_answer, question['question type']))
             answer, self.current_answer = self.selection(self.current_answer)
             return answer
         else:

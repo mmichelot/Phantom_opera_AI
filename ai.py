@@ -39,10 +39,12 @@ class AI(object, metaclass=ABCMeta):
         if question['question type'] == "select character":
             self.tree = Tree(self.player)
             self.tree.new_simulation(game_state, data)
+        #print(question['question type'])
+        #print("SERVER: " + str(data) + " : " + question['question type'])
         response_index = self.tree.choose_and_cut()
+        #print(question['question type'] + " : " + self.tree.root.question)
         # log
         self.log_answer(data, question, response_index)
-
         return response_index
 
     def handle_json(self, data):
