@@ -129,7 +129,7 @@ class Game:
         # set fantom
         self.alibi_cards = self.character_cards.copy()
 
-        if game_state["fantom"]:
+        if "fantom" in game_state and game_state["fantom"]:
             for c in self.alibi_cards:
                 if c.color == game_state["fantom"]:
                     self.fantom = c

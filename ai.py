@@ -42,7 +42,8 @@ class AI(object, metaclass=ABCMeta):
         #print(question['question type'])
         #print("SERVER: " + str(data) + " : " + question['question type'])
         response_index = self.tree.choose_and_cut()
-        #print(question['question type'] + " : " + self.tree.root.question)
+        if (question['question type'] != self.tree.root.question):
+            print("[WARN] Question differs between server and simulation.\n> Answering to: " + question['question type'] + " (simulation: " + self.tree.root.question + ")" )
         # log
         self.log_answer(data, question, response_index)
         return response_index

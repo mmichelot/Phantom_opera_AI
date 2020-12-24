@@ -3,7 +3,7 @@ import random
 
 from src.Game import Game
 
-SIMULATION = 100
+SIMULATION = 2000
 
 def print_tree(node, depth):
     current = node
@@ -53,7 +53,12 @@ class Tree():
                 best = self.root.children[i].wins / self.root.children[i].played
                 best_node = i
         #print(self.root.children[best_node].question)
-        self.root = self.root.children[best_node] #cut
+        try:
+            self.root = self.root.children[best_node] #cut
+        except IndexError:
+            print("[CRITIC] Please make sure you start the inspector first, and then the fantom.")
+            print("Exiting.")
+            exit(1)
         return best_node
 
     #Exploit or Explore

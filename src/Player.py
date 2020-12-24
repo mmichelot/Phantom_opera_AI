@@ -201,7 +201,7 @@ class Player:
                     selected_index = self.tree.ask(self.num, question)
 
                     if selected_index not in range(len(available_exits)):
-                        selected_exit = choice(passages_work)
+                        selected_exit = choice(available_exits)
 
                     else:
                         selected_exit = available_exits[selected_index]

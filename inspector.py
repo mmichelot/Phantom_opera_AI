@@ -23,10 +23,10 @@ stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.WARNING)
 inspector_logger.addHandler(stream_handler)
 
-class Inspector(AI):
+class Inspector(ai.AI):
 
     def __init__(self):
-        super().__init__(self, 0)
+        super().__init__(0)
 
     def log_answer(self, data, question, response_index):
         inspector_logger.debug("|\n|")
