@@ -60,21 +60,27 @@ class Game:
         self.position_carlotta += len(
             [p for p in self.characters if p.suspect])
         return screamed
-    
+
     def get_number_of_suspects(self):
         return len([p for p in self.characters if p.suspect])
 
     def init_tour(self, game_state, active_cards):
-        self.characters = set({Character(color) for color in colors})
-        for character in self.characters:
-            character.suspect = game_state["characters"][character.color].suspect
-            character.position = game_state["characters"][character.color].position
-            character.power = game_state["characters"][character.color].power
+        self.characters = []
+        self.active_cards = []
+        for character in game_state["characters"]:
+            c = Character(character['color'])
+            c.suspect = character['suspect']
+            c.position = character['position']
+            c.power = character['power']
+            self.characters.append(c)
             for data in active_cards:
-                if (character.color == data.color):
-                    self.active_cards.append(character)
+                if (character['color'] == data['color']):
+                    self.active_cards.append(c)
+
         self.character_cards = list(self.characters)
         self.set_game_state(game_state)
+        print(self.characters)
+        print(self.active_cards)
 
     def tour(self, tree):
         self.actions(tree)
@@ -117,15 +123,18 @@ class Game:
         self.blocked = game_state["blocked"]
         self.characters_display = game_state["characters"]
         self.character_cards_display = game_state["character_cards"]
-        self.active_cards_display = game_state["active"]
+        self.active_cards_display = game_state["active character_cards"]
         self.game_state = game_state
 
 
         # set fantom
         self.alibi_cards = self.character_cards.copy()
 
+        print(game_state["fantom"])
         if game_state["fantom"]:
-            self.fantom = Character(game_state["fantom"])
+            for c in self.alibi_cards:
+                if c.color == game_state["fantom"]:
+                    self.fantom = c
         else:
             self.fantom = choice(self.alibi_cards)
 

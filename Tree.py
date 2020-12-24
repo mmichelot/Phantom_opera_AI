@@ -39,9 +39,11 @@ class Tree():
         best = 0.0
         best_node = 0
         for i in range(len(self.root.children)):
-            if self.root.children[i].wins / self.root.children[i].played > best:
+            if self.root.children[i].played > 0 and self.root.children[i].wins / self.root.children[i].played > best:
                 best = self.root.children[i].wins / self.root.children[i].played
                 best_node = i
+        if len(self.root.children == 0):
+            print("Error")
         self.root = self.root.children[best_node] #cut
         return best_node
 
@@ -54,7 +56,12 @@ class Tree():
             n = current.children[i].played
             c = math.sqrt(2)
             N = current.played
-            res = (w / n) + (c * math.sqrt(math.log(N) / n))
+            if n == 0:
+                res = 0
+            else:
+                res = (w / n)
+                if N != 0:
+                    res += (c * math.sqrt(math.log(N) / n))
             if (res > best):
                 best = res
                 best_node = i

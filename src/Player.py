@@ -36,7 +36,7 @@ class Player:
         question = {"question type": "select character",
                     "data": available_characters,
                     "game state": game_state}
-        selected_character = self.tree.ask(self.tree, self, question)
+        selected_character = self.tree.ask(self.num, question)
 
         if selected_character not in range(len(active_cards)):
             selected_character = randint(0, len(active_cards) - 1)
@@ -73,7 +73,7 @@ class Player:
                 question = {"question type": f"activate {charact.color} power",
                             "data": [0, 1],
                             "game state": game_state}
-                power_activation = self.tree.ask(self.tree, self, question)
+                power_activation = self.tree.ask(self.num, question)
 
                 if power_activation == 1:
                     power_answer = "yes"
@@ -107,7 +107,7 @@ class Player:
                             question = {"question type": "white character power move " + character_to_move,
                                         "data": available_positions,
                                         "game state": game_state}
-                            selected_index = self.tree.ask(self.tree, self, question)
+                            selected_index = self.tree.ask(self.num, question)
 
                             if selected_index not in range(len(available_positions)):
                                 selected_position = choice(available_positions)
@@ -127,7 +127,7 @@ class Player:
                     question = {"question type": "purple character power",
                                 "data": available_colors,
                                 "game state": game_state}
-                    selected_index = self.tree.ask(self.tree, self, question)
+                    selected_index = self.tree.ask(self.num, question)
 
                     if selected_index not in range(len(colors)):
                         selected_character = choice(colors)
@@ -149,7 +149,7 @@ class Player:
                         question = {"question type": "brown character power",
                                     "data": available_colors,
                                     "game state": game_state}
-                        selected_index = self.tree.ask(self.tree, self, question)
+                        selected_index = self.tree.ask(self.num, question)
 
                         if selected_index not in range(len(colors)):
                             selected_character = choice(colors)
@@ -167,7 +167,7 @@ class Player:
                     question = {"question type": "grey character power",
                                 "data": available_rooms,
                                 "game state": game_state}
-                    selected_index = self.tree.ask(self.tree, self, question)
+                    selected_index = self.tree.ask(self.num, question)
 
                     if selected_index not in range(len(available_rooms)):
                         selected_index = randint(0, len(available_rooms) - 1)
@@ -184,7 +184,7 @@ class Player:
                     question = {"question type": "blue character power room",
                                 "data": available_rooms,
                                 "game state": game_state}
-                    selected_index = self.tree.ask(self.tree, self, question)
+                    selected_index = self.tree.ask(self.num, question)
 
                     if selected_index not in range(len(available_rooms)):
                         selected_index = randint(0, len(available_rooms) - 1)
@@ -198,7 +198,7 @@ class Player:
                     question = {"question type": "blue character power exit",
                                 "data": available_exits,
                                 "game state": game_state}
-                    selected_index = self.tree.ask(self.tree, self, question)
+                    selected_index = self.tree.ask(self.num, question)
 
                     if selected_index not in range(len(available_exits)):
                         selected_exit = choice(passages_work)
@@ -240,7 +240,7 @@ class Player:
             question = {"question type": "select position",
                         "data": available_positions,
                         "game state": game_state}
-            selected_index = self.tree.ask(self.tree, self, question)
+            selected_index = self.tree.ask(self.num, question)
 
             if selected_index not in range(len(available_positions)):
                 selected_position = choice(available_positions)
