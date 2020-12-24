@@ -2,11 +2,6 @@ import json
 from typing import Tuple
 from random import randint, choice
 from src.globals import passages, colors, pink_passages, before, after, logger, mandatory_powers
-from src.utils import ask_question_json
-
-
-def test():
-    return 1
 
 class Player:
     num: int

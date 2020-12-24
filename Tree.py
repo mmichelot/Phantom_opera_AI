@@ -21,14 +21,14 @@ class Tree():
         self.random_answer = []
         self.random_answer_index = 0
 
-    def new_simulation(self, characters, game_state):
+    def new_simulation(self, game_state, characters):
         #Launch simulation
         for _ in range(SIMULATION):
             self.current_answer = self.root
             self.random_answer_index = 0
-            self.game.init()
+            self.game.init_tour(game_state, characters)
             suspects_before = self.game.get_number_of_suspects()
-            fantom_scream = self.game.tour(self, characters) #launch sim
+            fantom_scream = self.game.tour(self) #launch sim
             innocents = suspects_before - self.game.get_number_of_suspects()
             winner = 0
             if (innocents == 0 or (innocents == 1 and fantom_scream == True)):

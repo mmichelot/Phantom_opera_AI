@@ -20,50 +20,31 @@ class Game:
     cards: List[Union[Character, str]]
     fantom: Character
 
-    def __init__(self):
-        self.characters = set({Character(color) for color in colors})
-        self.players = [Player(0), Player(1)]
+    #def __init__(self):
 
-        self.character_cards = list(self.characters)
-        self.active_cards = list()
-
-        self.game_state = {
-            "position_carlotta": self.position_carlotta,
-            "exit": self.exit,
-            "num_tour": self.num_tour,
-            "shadow": self.shadow,
-            "blocked": self.blocked,
-            "characters": self.characters_display,
-            "character_cards": self.character_cards_display,
-            "active character_cards": self.active_cards_display,
-        }
-
-    def actions(self, step):
+    def actions(self, tree):
         first_player_in_phase = (self.num_tour + 1) % 2
-        if first_player_in_phase == 0:
-            shuffle(self.character_cards)
-            self.active_cards = self.character_cards[:4]
-        else:
-            self.active_cards = self.character_cards[4:]
 
         for card in self.active_cards:
             card.power_activated = False
 
-        if (step > 3):
+        if (len(self.active_cards) > 3):
             self.players[first_player_in_phase].play(self, tree)
-        if (step > 2):
+        if (len(self.active_cards) > 2):
             self.players[1 - first_player_in_phase].play(self, tree)
-        if (step > 1):
+        if (len(self.active_cards) > 1):
             self.players[1 - first_player_in_phase].play(self, tree)
-        if (step > 0):
+        if (len(self.active_cards) > 0):
             self.players[first_player_in_phase].play(self, tree)
 
     def fantom_scream(self):
+        screamed = False
         partition: List[Set[Character]] = [
             {p for p in self.characters if p.position == i} for i in range(10)]
         if len(partition[self.fantom.position]) == 1 \
                 or self.fantom.position == self.shadow:
             logger.info("The fantom screams.")
+            screamed = True
             self.position_carlotta += 1
             for room, chars in enumerate(partition):
                 if len(chars) > 1 and room != self.shadow:
@@ -77,15 +58,32 @@ class Game:
                         p.suspect = False
         self.position_carlotta += len(
             [p for p in self.characters if p.suspect])
+        return screamed
+    
+    def get_number_of_suspects(self):
+        return len([p for p in self.characters if p.suspect])
 
-    def tour(self, tree, game_state, step):
+    def init_tour(self, game_state, active_cards):
+        self.characters = set({Character(color) for color in colors})
+        for character in self.characters:
+            character.suspect = game_state["characters"][character.color].suspect
+            character.position = game_state["characters"][character.color].position
+            character.power = game_state["characters"][character.color].power
+            for data in active_cards:
+                if (character.color == data.color):
+                    self.active_cards.append(character)
+        self.players = [Player(0), Player(1)]
+        self.character_cards = list(self.characters)
         self.set_game_state(game_state)
-        self.actions(step, tree)
-        self.fantom_scream()
+
+    def tour(self, tree):
+        self.actions(tree)
+
+        screamed = self.fantom_scream()
         for p in self.characters:
             p.power = True
         self.num_tour += 1
-        return self.game_state
+        return screamed
 
     def update_game_state(self, player_role):
         self.characters_display = [character.display() for character in

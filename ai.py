@@ -38,7 +38,7 @@ class AI(object, metaclass=ABCMeta):
 
         if question['question type'] == "select character":
             self.tree = Tree(self.player)
-            self.tree.new_simulation(len(data), game_state)
+            self.tree.new_simulation(game_state, data)
         response_index = self.tree.choose_and_cut()
         # log
         self.log_answer(data, question, response_index)
