@@ -20,7 +20,8 @@ class Game:
     cards: List[Union[Character, str]]
     fantom: Character
 
-    #def __init__(self):
+    def __init__(self):
+        self.players = [Player(0), Player(1)]
 
     def actions(self, tree):
         first_player_in_phase = (self.num_tour + 1) % 2
@@ -72,7 +73,6 @@ class Game:
             for data in active_cards:
                 if (character.color == data.color):
                     self.active_cards.append(character)
-        self.players = [Player(0), Player(1)]
         self.character_cards = list(self.characters)
         self.set_game_state(game_state)
 
