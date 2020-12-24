@@ -129,8 +129,8 @@ class Player:
                                 "game state": game_state}
                     selected_index = self.tree.ask(self.num, question)
 
-                    if selected_index not in range(len(colors)):
-                        selected_character = choice(colors)
+                    if selected_index not in range(len(available_characters)):
+                        selected_character = choice(available_characters)
 
                     else:
                         selected_character = available_characters[selected_index]
@@ -151,8 +151,8 @@ class Player:
                                     "game state": game_state}
                         selected_index = self.tree.ask(self.num, question)
 
-                        if selected_index not in range(len(colors)):
-                            selected_character = choice(colors)
+                        if selected_index not in range(len(available_characters)):
+                            selected_character = choice(available_characters)
                         else:
                             selected_character = available_characters[selected_index]
 

@@ -3,7 +3,7 @@ import socket
 from abc import ABCMeta, abstractmethod
 
 import protocol
-from Tree import Tree
+from Tree import Tree, print_tree
 
 host = "localhost"
 port = 12000
@@ -39,6 +39,7 @@ class AI(object, metaclass=ABCMeta):
         if question['question type'] == "select character":
             self.tree = Tree(self.player)
             self.tree.new_simulation(game_state, data)
+            print_tree(self.tree.root)
         #print(question['question type'])
         #print("SERVER: " + str(data) + " : " + question['question type'])
         response_index = self.tree.choose_and_cut()
