@@ -1,9 +1,11 @@
 import math
 import random
+import time
 
 from src.Game import Game
 
-SIMULATION = 2000
+#SIMULATION = 20000
+TIMEOUT = 7
 
 def print_tree(node, index = 0, depth = 0):
     if (depth == 0):
@@ -25,7 +27,6 @@ class Node:
 
 class Tree():
     def __init__(self, player):
-        #print("NEW TREE")
         self.root = Node(0, 0, None)
         self.game = Game()
         self.player = player #0 (inspector) or 1 (fantom)
@@ -35,7 +36,8 @@ class Tree():
 
     def new_simulation(self, game_state, characters):
         #Launch simulation
-        for _ in range(SIMULATION):
+        start = time.time() #as long as we have time
+        while time.time() - start < TIMEOUT:
             self.current_answer = self.root
             self.random_answer_index = 0
             self.game.init_tour(game_state, characters)
@@ -49,31 +51,33 @@ class Tree():
             self.backpropagation(winner == self.player, self.current_answer)
     
     def choose_and_cut(self):
-        #print_tree(self.root)
         best = 0.0
         best_inno = -1
         best_node = 0
-        #for i in range(len(self.root.children)):
-        #    if self.root.children[i].played > 0 and self.root.children[i].wins / self.root.children[i].played > best:
-        #        best = self.root.children[i].wins / self.root.children[i].played
-        #        best_node = i
-        #In case no win is possible, we do our best
-        #if best == 0.0:
         for i in range(len(self.root.children)):
-            #If i'm the inspector and I can do more innocents or I'm the fantom and I can do less innocents
-            if best_inno < 0 or\
-                (self.player == 0 and self.root.innocents > best_inno) or\
-                (self.player == 1 and self.root.innocents < best_inno):
-                best_inno = self.root.innocents
-                best_node = i
-        #print(self.root.children[best_node].question)
+            if self.root.children[i].played > 0 and self.root.children[i].wins / self.root.children[i].played >= best:
+                if self.root.children[i].wins / self.root.children[i].played > best or best_inno < 0 or\
+                    (self.player == 0 and self.root.children[i].innocents > best_inno) or\
+                    (self.player == 1 and self.root.children[i].innocents < best_inno):
+                    best = self.root.children[i].wins / self.root.children[i].played
+                    best_node = i
+                    best_inno = self.root.children[i].innocents
+        #In case no win is possible, we do our best.
+        best_inno = -1
+        if best == 0.0:
+            for i in range(len(self.root.children)):
+                #If i'm the inspector and I can do more innocents or I'm the fantom and I can do less innocents
+                if best_inno < 0 or\
+                    (self.player == 0 and self.root.children[i].innocents > best_inno) or\
+                    (self.player == 1 and self.root.children[i].innocents < best_inno):
+                    best_inno = self.root.children[i].innocents
+                    best_node = i
         try:
             self.root = self.root.children[best_node] #cut
         except IndexError:
             print("[CRITIC] Please make sure you start the inspector first, and then the fantom.")
             print("Exiting.")
             exit(1)
-        #print("Answer: " + str(best_node))
         return best_node
 
     #Exploit or Explore
@@ -83,8 +87,8 @@ class Tree():
         for i in range(len(current.children)):
             w = current.children[i].wins
             n = current.children[i].played
-            #c = math.sqrt(2)
-            c = 2
+            c = math.sqrt(2)
+            #c = 2
             N = current.played
             if n == 0:
                 return i, current.children[i]
@@ -95,7 +99,6 @@ class Tree():
                 best = res
                 best_node = i
         return best_node, current.children[best_node]
-        #while (len(current.children) > 0): #while not leaf
 
     #Update values in the tree
     def backpropagation(self, win, leaf):
@@ -117,7 +120,6 @@ class Tree():
     #To answer the question asked by the simulation. Build the tree from here if player is my player.
     def ask(self, player, question):
         if (player == self.player):
-            #print("SIMU: " + str(question['data']) + " : " + question['question type'])
             if (len(self.current_answer.children) == 0):
                 for i in range(len(question['data'])):
                     self.current_answer.children.append(Node(0, 0, self.current_answer, question['question type']))

@@ -127,7 +127,7 @@ class Game:
 
 
         # set fantom
-        self.alibi_cards = self.character_cards.copy()
+        self.alibi_cards = [p for p in self.characters if p.suspect].copy()
 
         if "fantom" in game_state and game_state["fantom"]:
             for c in self.alibi_cards:
