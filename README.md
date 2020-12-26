@@ -33,3 +33,5 @@ La victoire sur un tour est définie comme suit :
 Une fois l'algorithme terminé, nous choisissons les réponses les plus prometteuses à envoyer au serveur, et on définit le nœud principal de l'arbre sur cette réponse (pour libérer la mémoire le plus vite possible).
 
 Si aucune victoire n'est trouvée, ou que deux choix présentent le même ratio de simulations gagnées/jouées, le choix s'effectuera alors en fonction du nombre d'innocents le plus optimal en fonction du rôle joué.
+
+De Valentin Lebon et Marius Michelot
