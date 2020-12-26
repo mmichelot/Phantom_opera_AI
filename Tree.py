@@ -10,7 +10,7 @@ def print_tree(node, index = 0, depth = 0):
         print("TREE:")
     current = node
     if (depth < 1):
-        print(("---" * depth) + node.question + "[" + str(index) + "] : " + str(node.wins) + "/" + str(node.played))
+        print(("---" * depth) + node.question + "[" + str(index) + "] : " + str(node.wins) + "/" + str(node.played) + " : " + str(node.innocents))
     for i in range(len(node.children)):
         print_tree(node.children[i], i, depth + 1)
 
@@ -53,19 +53,19 @@ class Tree():
         best = 0.0
         best_inno = -1
         best_node = 0
-        for i in range(len(self.root.children)):
-            if self.root.children[i].played > 0 and self.root.children[i].wins / self.root.children[i].played > best:
-                best = self.root.children[i].wins / self.root.children[i].played
-                best_node = i
+        #for i in range(len(self.root.children)):
+        #    if self.root.children[i].played > 0 and self.root.children[i].wins / self.root.children[i].played > best:
+        #        best = self.root.children[i].wins / self.root.children[i].played
+        #        best_node = i
         #In case no win is possible, we do our best
-        if best == 0.0:
-            for i in range(len(self.root.children)):
-                #If i'm the inspector and I can do more innocents or I'm the fantom and I can do less innocents
-                if best_inno < 0 or\
-                    (self.player == 0 and self.root.innocents > best_inno) or\
-                    (self.player == 1 and self.root.innocents < best_inno):
-                    best_inno = self.root.innocents
-                    best_node = i
+        #if best == 0.0:
+        for i in range(len(self.root.children)):
+            #If i'm the inspector and I can do more innocents or I'm the fantom and I can do less innocents
+            if best_inno < 0 or\
+                (self.player == 0 and self.root.innocents > best_inno) or\
+                (self.player == 1 and self.root.innocents < best_inno):
+                best_inno = self.root.innocents
+                best_node = i
         #print(self.root.children[best_node].question)
         try:
             self.root = self.root.children[best_node] #cut
@@ -106,10 +106,10 @@ class Tree():
             i.played += 1
             if (i.parent != None):
                 #If I'm the fantom and I can do less innocents
-                if (self.player == 1 and (i.parent.innocents < 0 or i.parent.innocents < i.innocents)):
+                if (self.player == 1 and (i.parent.innocents < 0 or i.parent.innocents > i.innocents)):
                     i.parent.innocents = i.innocents
                 #If I'm the inspector and I can do more innocents
-                elif (self.player == 0 and (i.parent.innocents < 0 or i.parent.innocents > i.innocents)):
+                elif (self.player == 0 and (i.parent.innocents < 0 or i.parent.innocents < i.innocents)):
                     i.parent.innocents = i.innocents
             i = i.parent
     
