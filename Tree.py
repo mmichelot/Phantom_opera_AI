@@ -11,8 +11,8 @@ def print_tree(node, index = 0, depth = 0):
     if (depth == 0):
         print("TREE:")
     current = node
-    if (depth < 1):
-        print(("---" * depth) + node.question + "[" + str(index) + "] : " + str(node.wins) + "/" + str(node.played) + " : " + str(node.innocents))
+    #if (depth < 1):
+    print(("---" * depth) + node.question + "[" + str(index) + "] : " + str(node.wins) + "/" + str(node.played) + " : " + str(node.innocents))
     for i in range(len(node.children)):
         print_tree(node.children[i], i, depth + 1)
 

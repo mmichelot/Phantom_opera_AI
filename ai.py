@@ -39,7 +39,7 @@ class AI(object, metaclass=ABCMeta):
         if question['question type'] == "select character":
             self.tree = Tree(self.player)
             self.tree.new_simulation(game_state, data)
-            print_tree(self.tree.root)
+            #print_tree(self.tree.root)
         response_index = self.tree.choose_and_cut()
         if (question['question type'] != self.tree.root.question):
             print("[WARN] Question differs between server and simulation.\n> Answering to: " + question['question type'] + " (simulation: " + self.tree.root.question + ")" )
