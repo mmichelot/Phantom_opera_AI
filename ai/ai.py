@@ -3,7 +3,7 @@ import socket
 from abc import ABCMeta, abstractmethod
 
 import protocol
-from Tree import Tree, print_tree
+from ai.Tree import Tree, print_tree
 
 host = "localhost"
 port = 12000

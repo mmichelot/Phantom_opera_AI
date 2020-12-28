@@ -34,4 +34,14 @@ Une fois l'algorithme terminé, nous choisissons les réponses les plus promette
 
 Si aucune victoire n'est trouvée, ou que deux choix présentent le même ratio de simulations gagnées/jouées, le choix s'effectuera alors en fonction du nombre d'innocents le plus optimal en fonction du rôle joué.
 
+## To launch a game
+
+1) python3 server.py
+
+2) python3 marius_inspector.py
+
+3) python3 marius_fantom.py
+
 De Valentin Lebon et Marius Michelot
+
+

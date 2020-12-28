@@ -4,17 +4,6 @@ import socket
 from logging.handlers import RotatingFileHandler
 
 """
-    server setup
-"""
-link = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-link.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-host = ''
-port = 12000
-link.bind((host, port))
-# list that will later contain the sockets
-clients = []
-
-"""
     game data
 """
 # determines whether the power of the character is used before
@@ -56,14 +45,21 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter(
     "%(asctime)s :: %(levelname)s :: %(message)s", "%H:%M:%S")
+
 # logger to file
-if os.path.exists("./logs/game.log"):
-    os.remove("./logs/game.log")
-file_handler = RotatingFileHandler('./logs/game.log', 'a', 1000000, 1)
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-# logger to console
-stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
-logger.addHandler(stream_handler)
+def logger_to_file(filename, retry):
+    filename_ext = filename + ".log"
+    try:
+        if os.path.exists(filename_ext):
+            os.remove(filename_ext)
+        file_handler = RotatingFileHandler(filename_ext, 'a', 1000000, 1)
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    except:
+        if (retry):
+            logger_to_file(filename + "_1", False)
+        else:
+            print("[ERROR] Failed to log to " + filename_ext + ".")
+
+logger_to_file("./logs/game", True)

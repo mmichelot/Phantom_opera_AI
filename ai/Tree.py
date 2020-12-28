@@ -2,7 +2,7 @@ import math
 import random
 import time
 
-from src.Game import Game
+from ai.src.Game import Game
 
 #SIMULATION = 20000
 TIMEOUT = 7
